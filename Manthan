@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Happy Birthday!</title>
+<style>
+  :root{
+    --bg: #fff7fb;
+    --card: #fff;
+    --accent: #ff6fa7; /* pink */
+    --accent-soft: #ffd6e6;
+    --gold: #f6c86f;
+    --text: #2b2b2b;
+    --muted: #6b6b6b;
+  }
+
+  html,body{height:100%;}
+  body{
+    margin:0;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: radial-gradient(circle at 10% 10%, rgba(255,230,240,0.6), transparent 10%),
+                radial-gradient(circle at 90% 90%, rgba(255,245,230,0.6), transparent 10%),
+                var(--bg);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+  
+  /* Frame Container wraps the card for the outside effect */
+  .frame-container{
+    padding:12px;
+    border-radius:24px;
+    background: var(--card);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.15),
+                0 0 0 1px var(--accent-soft),
+                0 0 0 4px rgba(255,255,255,0.7);
+    position:relative;
+    animation:pop .6s cubic-bezier(.2,.9,.2,1);
+  }
+
+  .card{
+    width:100%;
+    max-width:720px;
+    border-radius:18px;
+    background: linear-gradient(180deg, var(--card), #fffafc);
+    box-shadow: none; 
+    padding:28px;
+    position:relative;
+    overflow:hidden;
+    transform-origin:center;
+    animation: none; 
+  }
+
+  @keyframes pop{
+    from { transform: scale(.98); opacity:0; }
+    to { transform: scale(1); opacity:1; }
+  }
+
+  .card::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(255,120,160,0.06) 0 8%, transparent 9%),
+      radial-gradient(circle at 90% 80%, rgba(246,200,111,0.04) 0 8%, transparent 9%),
+      linear-gradient(180deg, rgba(255,255,255,0.0), rgba(255,255,255,0.0));
+    mix-blend-mode: screen;
+  }
+
+  header{
+    display:flex;
+    gap:16px;
+    align-items:center;
+  }
+
+  .avatar{
+    flex:0 0 84px;
+    height:84px;
+    border-radius:16px;
+    background: linear-gradient(135deg, var(--gold), var(--accent)); /* Fallback */
+    display:grid;
+    place-items:center;
+    font-size:36px;
+    color:#fff;
+    box-shadow: 0 6px 18px rgba(246,200,111,0.18);
+    position:relative; 
+    overflow: hidden;
+  }
+
+  /* CSS for the photo inside the avatar */
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 16px;
+    display: block;
+  }
+
+  h1{
+    margin:0;
+    font-size:clamp(20px, 4vw, 34px);
+    color:var(--text);
+    line-height:1;
+  }
+
+  p.lead{
+    margin:6px 0 0 0;
+    color:var(--muted);
+    font-size:14px;
+  }
+
+  .message{
+    margin-top:18px;
+    padding:18px;
+    border-radius:12px;
+    background: linear-gradient(180deg, rgba(255,111,153,0.04), rgba(246,200,111,0.02));
+    color:var(--text);
+    font-size:16px;
+    line-height:1.45;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+  }
+
+  .controls{
+    margin-top:18px;
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+
+  button.primary{
+    background: linear-gradient(90deg, var(--accent), #ff8fb3);
+    border: none;
+    color: white;
+    padding:12px 18px;
+    font-size:16px;
+    border-radius:12px;
+    cursor:pointer;
+    box-shadow: 0 8px 20px rgba(255,111,153,0.18);
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  button.primary:active{ transform: translateY(2px) scale(.998); }
+  button.primary:focus{ outline:3px solid rgba(255,111,153,0.18); outline-offset:3px; }
+
+  button.secondary{
+    background:transparent;
+    border:1px solid rgba(43,43,43,0.06);
+    padding:10px 14px;
+    border-radius:10px;
+    cursor:pointer;
+    color:var(--muted);
+    font-size:14px;
+  }
+
+  /* hearts sprinkled using absolute positioned elements (JS will add them) */
+  .hearts{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    overflow:hidden;
+  }
+
+  /* revealed surprise area */
+  .surprise{
+    margin-top:16px;
+    padding:14px;
+    border-radius:10px;
+    background:rgba(255,250,255,0.9);
+    display:none;
+    align-items:center;
+    gap:12px;
+  }
+  .surprise.show{ display:flex; }
+
+  .mascot{
+    width:54px;
+    height:54px;
+    border-radius:10px;
+    display:grid;
+    place-items:center;
+    font-size:28px;
+    background: linear-gradient(135deg,#fff1b8,#ffd6e6);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+  }
+
+  footer{
+    margin-top:20px;
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    align-items:center;
+    color:var(--muted);
+    font-size:13px;
+  }
+
+  @media (max-width:460px){
+    .frame-container{ padding:8px; border-radius:20px; }
+    .card{ padding:18px; border-radius:14px; }
+  }
+
+  /* confetti pieces (emojis) */
+  .confetti{
+    position:fixed;
+    left:0; top:0;
+    width:100%; height:100%;
+    pointer-events:none;
+    overflow:hidden;
+  }
+  .confetti span{
+    position:absolute;
+    display:block;
+    font-size: 16px;
+    opacity:0.95;
+    transform-origin:center;
+    will-change: transform, top;
+  }
+</style>
+</head>
+<body>
+<main class="frame-container" role="presentation">
+  <main class="card" role="region" aria-label="Birthday card">
+    <div class="hearts" aria-hidden="true"></div>
+
+    <header>
+      <div class="avatar" aria-hidden="true">
+        <img src="https://uploads.onecompiler.io/445yeyhdt/446cf2mb6/1000063683.jpg" 
+             alt="Recipient's birthday photo" 
+             onerror="this.onerror=null; this.src='https://placehold.co/84x84/f6c86f/fff?text=Photo';" />
+      </div>
+      <div>
+        <h1 id="recipient">Happy Birthday, <span id="name">Friend</span> 🎉</h1>
+        <p class="lead" id="subtitle">Wishing you a day full of joy and surprises.</p>
+      </div>
+    </header>
+
+    <div class="message" id="message">
+      Dear <span id="name2">Friend</span>,<br><br>
+      May your year ahead be sparkling with bright moments, warm hugs and sweet memories. Enjoy your special day!
+    </div>
+
+    <div class="controls">
+      <button class="primary" id="surpriseBtn" aria-controls="surprise" aria-expanded="false">Open Birthday Surprise</button>
+      <button class="secondary" id="editBtn" title="Quick edit name/message">Edit name/message</button>
+    </div>
+
+    <div id="surprise" class="surprise" role="status" aria-live="polite">
+      <div class="mascot" aria-hidden="true">✨</div>
+      <div>
+        <strong id="surpriseTitle">Surprise!</strong>
+        <div id="surpriseText">You are amazing — have the best birthday ever! 🎈</div>
+      </div>
+    </div>
+
+    <footer>
+      <div>Made with ❤️ — Customize me!</div>
+      <div style="font-style:italic;color:var(--muted);">Tap the button for confetti</div>
+    </footer>
+  </main>
+</main>
+
+  <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+<script>
+/*
+  Simple JS functions for card interaction and decoration.
+*/
+
+const card = document.querySelector('.card');
+const heartsContainer = document.querySelector('.hearts');
+
+function makeHeart(x, y, size, delay, speed){
+  const el = document.createElement('div');
+  el.style.position = 'absolute';
+  el.style.left = x + 'px';
+  el.style.top = y + 'px';
+  el.style.width = el.style.height = size + 'px';
+  el.style.opacity = 0.85;
+  el.style.transform = 'translateY(0) rotate(0deg)';
+  el.style.transition = `transform ${speed}s ease-out ${delay}s, opacity ${speed}s linear ${delay}s`;
+  el.innerHTML = '❤';
+  el.style.fontSize = (size*0.7)+'px';
+  el.style.color = 'rgba(255,111,153,0.65)';
+  el.style.pointerEvents = 'none';
+  heartsContainer.appendChild(el);
+  requestAnimationFrame(()=> {
+    el.style.transform = `translateY(-${40 + Math.random()*80}px) rotate(${Math.random()*80-40}deg)`;
+    el.style.opacity = 0.25;
+  });
+  setTimeout(()=> el.remove(), (speed+delay)*1000 + 500);
+}
+
+function sprinkleHearts(){
+  const rect = card.getBoundingClientRect();
+  for(let i=0;i<8;i++){
+    const x = Math.random()*(rect.width-20);
+    const y = Math.random()*(rect.height-20);
+    const size = 10 + Math.random()*18;
+    const delay = Math.random()*1.2;
+    const speed = 2 + Math.random()*2;
+    makeHeart(x,y,size,delay,speed);
+  }
+}
+setInterval(sprinkleHearts, 2200);
+sprinkleHearts(); // initial
+
+// FINAL CONFETTI: Very slow, 8-second fall for a snow-like effect
+function launchConfetti(count=50){
+  const confetti = document.getElementById('confetti');
+  const emojis = ['❄️','🪷']; 
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  const duration = 8000; // 8 seconds for very slow fall
+
+  for(let i=0;i<count;i++){
+    const span = document.createElement('span');
+    span.style.left = Math.random()*w + 'px';
+    span.style.top = (-20 - Math.random()*50) + 'px';
+    span.innerHTML = emojis[Math.floor(Math.random()*emojis.length)]; 
+    span.style.transform = `rotate(${Math.random()*360}deg)`;
+    span.style.fontSize = (16 + Math.random()*10) + 'px';
+    confetti.appendChild(span);
+    
+    // Animate fall (8 seconds, linear easing for steady movement)
+    span.animate([
+      { transform: `translateY(0) rotate(${Math.random()*360}deg)`, opacity:1 },
+      { transform: `translateY(${h + 200}px) rotate(${Math.random()*720-360}deg)`, opacity:0.85 }
+    ], { 
+        duration: duration, 
+        easing: 'linear' 
+    });
+    
+    setTimeout(()=> span.remove(), duration + 100); 
+  }
+}
+
+// handle button click
+const surpriseBtn = document.getElementById('surpriseBtn');
+const surpriseArea = document.getElementById('surprise');
+surpriseBtn.addEventListener('click', () => {
+  const expanded = surpriseBtn.getAttribute('aria-expanded') === 'true';
+  if (!expanded) {
+    launchConfetti(70); 
+    surpriseArea.classList.add('show');
+    surpriseBtn.setAttribute('aria-expanded','true');
+    surpriseBtn.textContent = 'Close Surprise';
+    surpriseBtn.animate([{ transform:'scale(1)' },{ transform:'scale(1.04)' },{ transform:'scale(1)'}], { duration:420, easing:'ease-out' });
+  } else {
+    surpriseArea.classList.remove('show');
+    surpriseBtn.setAttribute('aria-expanded','false');
+    surpriseBtn.textContent = 'Open Birthday Surprise';
+  }
+});
+
+// quick edit controls
+document.getElementById('editBtn').addEventListener('click', ()=>{
+  const name = prompt('Enter recipient name:', document.getElementById('name').textContent) || 'Friend';
+  const message = prompt('Enter short message:', document.getElementById('message').textContent) || '';
+  document.getElementById('name').textContent = name;
+  document.getElementById('name2').textContent = name;
+  document.getElementById('recipient').querySelector('span').textContent = name;
+  const msgEl = document.getElementById('message');
+  msgEl.innerHTML = message || `Dear ${name},<br><br>May your year ahead be sparkling with bright moments, warm hugs and sweet memories. Enjoy your special day!`;
+  document.getElementById('surpriseText').textContent = `Happy Birthday, ${name}! You are amazing — celebrate big 🎈`;
+});
+
+// accessibility: allow Enter key on the card to open surprise
+card.addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter') { surpriseBtn.click(); }
+});
+card.tabIndex = -1;
+</script>
+</body>
+</html>
